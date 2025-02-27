@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>wktomo研发的计算器1.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #ff7eb3);
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            user-select: none; /* 防止用户选择文本 */
+            position: relative; /* 添加相对定位 */
+            overflow: hidden; /* 防止爱心超出视图范围 */
+        }
+
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 100px;
+            height: 90px;
+            background: rgba(255, 0, 0, 0.2); /* 透明红色 */
+            margin: 0 auto;
+            animation: heartbeat 1s infinite;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        .calculator {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 600px; /* 增加宽度 */
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 100 100" fill="red"><path d="M50 0 L80 30 Q90 40 50 50 Q10 40 20 30 Z" /></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            background-size: 50px;
+        }
+
+        .display {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 100%;
+            padding: 30px;
+            border-radius: 5px;
+            text-align: right;
+            margin-bottom: 30px;
+            font-size: 28px;
+            position: relative;
+            overflow: hidden;
+            user-select: text; /* 允许选择显示区域的文本 */
+        }
+
+        .keys {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 调整列数 */
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: rgba(255, 255, 255, 0.7);
+            color: #000;
+            border: none;
+            padding: 40px; /* 增加按钮的内边距 */
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            user-select: none; /* 防止用户选择按钮文本 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        button:active {
+            transform: translateY(2px);
+        }
+
+        .operator, .special {
+            background-color: rgba(255, 136, 0, 0.8);
+        }
+
+        .operator:hover, .special:hover {
+            background-color: rgba(255, 136, 0, 1);
+        }
+
+        .number {
+            background-image: linear-gradient(45deg, #4ca1af, #c4e17f); /* 渐变颜色 */
+            color: #fff;
+        }
+
+        .number:hover {
+            background-image: linear-gradient(135deg, #4ca1af, #c4e17f); /* 渐变颜色变化 */
+        }
+
+        .equals {
+        }
+
+        .clear {
+            grid-column: span 2;
+            background-color: rgba(255, 69, 69, 0.8);
+        }
+
+        .clear:hover {
+            background-color: rgba(255, 69, 69, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="heart"></div> <!-- 透明跳动的爱心 -->
+    <div class="calculator">
+        <div class="display" id="display">
+            <div class="marquee" id="marqueeText">欢迎使用wktomo研发的计算器</div>
+        </div>
+        <div class="keys">
+            <!-- First row -->
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+
+            <!-- Second row -->
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+
+            <!-- Third row -->
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+
+            <!-- Fourth row -->
+            <button class="number" onclick="appendNumber('0')">0</button>
+            <button class="number" onclick="appendNumber('.')">.</button>
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+
+            <!-- Fifth row -->
+            <button class="special" onclick="calculateSquare()">x²</button>
+            <button class="special" onclick="calculateRoot()">√</button>
+            <button class="operator" onclick="appendOperator('^')">xʸ</button>
+            <button class="operator" onclick="appendOperator('%')">%</button>
+
+            <!-- Sixth row -->
+            <button class="number" onclick="appendNumber('(')">(</button>
+            <button class="number" onclick="appendNumber(')')">)</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+    <script>
+        function appendNumber(number) {
+            const display = document.getElementById('display');
+            if (display.textContent === '0' || display.textContent === '') {
+                display.textContent = number;
+            } else {
+                display.textContent += number;
+            }
+        }
+
+        function appendOperator(operator) {
+            const display = document.getElementById('display');
+            if (display.textContent === '0' || display.textContent === '') {
+                display.textContent = operator;
+            } else {
+                display.textContent += ' ' + operator + ' ';
+            }
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').textContent = '0';
+        }
+
+        function calculate() {
+            try {
+                const display = document.getElementById('display');
+                let expression = display.textContent.trim().replace(/xʸ/g, '^').replace(/%/g, '*0.01');
+                const result = eval(expression);
+                display.textContent = isNaN(result) ? 'Error' : result.toString();
+            } catch (error) {
+                alert('Invalid calculation');
+                clearDisplay();
+            }
+        }
+
+        function calculateSquare() {
+            const display = document.getElementById('display');
+            const currentNumber = parseFloat(display.textContent);
+            display.textContent = currentNumber * currentNumber;
+        }
+
+        function calculateRoot() {
+            const display = document.getElementById('display');
+            const currentNumber = parseFloat(display.textContent);
+            display.textContent = Math.sqrt(currentNumber);
+        }
+    </script>
+</body>
+</html>
